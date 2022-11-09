@@ -2,11 +2,11 @@ package ru.yandex.praktikum.catsgram.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.yandex.praktikum.catsgram.model.Post;
 import ru.yandex.praktikum.catsgram.model.User;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -21,5 +21,11 @@ public class UserService {
     public User create(User user) {
         users.add(user);
         return user;
+    }
+
+    public Optional<User> findByUsername(String username) {
+        return users.stream()
+                .filter(x -> x.getUsername().equals(username))
+                .findFirst();
     }
 }
