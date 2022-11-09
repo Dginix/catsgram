@@ -7,15 +7,27 @@ import ru.yandex.praktikum.catsgram.model.Post;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 public class PostService {
     private final List<Post> posts = new ArrayList<>();
 
-    public List<Post> findAll() {
-        log.debug("Текущее количество постов: {}", posts.size());
-        return posts;
+    public List<Post> findAll(Integer size, String sort, Integer from) {
+        return posts.stream()
+                .sorted(((o1, o2) -> {
+                    if (sort.equals("desc")) {
+                        return o2.getCreationDate().compareTo(o1.getCreationDate());
+                    }
+                    else if (sort.equals("asc")){
+                        return o1.getCreationDate().compareTo(o2.getCreationDate());
+                    }
+                    else return 0;
+                }))
+                .skip(from)
+                .limit(size)
+                .toList();
     }
 
     public Post create(Post post) {
