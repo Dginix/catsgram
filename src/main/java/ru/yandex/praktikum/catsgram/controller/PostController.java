@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.praktikum.catsgram.exception.IncorrectParameterException;
+import ru.yandex.praktikum.catsgram.exception.PostNotFoundException;
 import ru.yandex.praktikum.catsgram.model.Post;
 import ru.yandex.praktikum.catsgram.service.PostService;
 
@@ -54,7 +55,7 @@ public class PostController {
             check.put("size", size.isPresent());
             ArrayList<String> result = new ArrayList<>();
             StringBuilder resultString = new StringBuilder();
-            check.entrySet().stream().filter(x -> x.getValue()==false).forEach(x -> result.add(x.getKey()));
+            check.entrySet().stream().filter(x -> !x.getValue()).forEach(x -> result.add(x.getKey()));
             throw new IncorrectParameterException(result.stream().collect(Collectors.joining(", ")));
         }
     }
@@ -66,6 +67,9 @@ public class PostController {
 
     @GetMapping("/posts/{postId}")
     public Optional<Post> findById(@PathVariable Integer postId) {
+        if (!postService.findById(postId).isPresent()) {
+            throw new PostNotFoundException("post not found");
+        }
         return postService.findById(postId);
     }
 }
